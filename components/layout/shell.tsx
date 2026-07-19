@@ -1,6 +1,3 @@
-import { Sidebar } from "./sidebar";
-import { Header } from "./header";
-
 interface ShellProps {
     children: React.ReactNode;
     title?: string;
@@ -8,12 +5,13 @@ interface ShellProps {
 
 export function Shell({ children, title }: ShellProps) {
     return (
-        <div className="flex h-screen overflow-hidden bg-background">
-            <Sidebar />
-            <div className="flex flex-1 flex-col overflow-hidden">
-                <Header title={title} />
-                <main className="flex-1 overflow-y-auto p-6">{children}</main>
-            </div>
-        </div>
+        <>
+            {title && (
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+                </div>
+            )}
+            {children}
+        </>
     );
 }

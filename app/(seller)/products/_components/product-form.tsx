@@ -33,10 +33,12 @@ const schema = z.object({
     name: z.string().min(2, "Name is required"),
     slug: z.string().min(2, "Slug is required"),
     description: z.string().optional(),
-    basePrice: z
+    price: z
         .string()
         .min(1, "Price is required")
         .refine((value) => !Number.isNaN(Number(value)) && Number(value) > 0, "Price must be positive"),
+    quantity: z.string().optional(),
+    storeId: z.string().optional(),
     status: z.enum(productStatuses),
     categoryId: z.string().min(1, "Select a category"),
     brandId: z.string().min(1, "Select a brand"),
@@ -73,7 +75,9 @@ export function ProductForm({
             name: product?.name ?? "",
             slug: product?.slug ?? "",
             description: product?.description ?? "",
-            basePrice: product ? String(product.basePrice) : "",
+            price: product ? String(product.price) : "",
+            quantity: product ? String(product.quantity) : "0",
+            storeId: product?.storeId ?? "",
             status: product?.status ?? "DRAFT",
             categoryId: product?.category?.id ?? "",
             brandId: product?.brand?.id ?? "",
@@ -93,9 +97,9 @@ export function ProductForm({
         defaultValues,
     });
 
-    const [previewName, previewDescription, previewBasePrice, previewStatus, previewCategoryId, previewBrandId] = useWatch({
+    const [previewName, previewDescription, previewPrice, previewStatus, previewCategoryId, previewBrandId] = useWatch({
         control,
-        name: ["name", "description", "basePrice", "status", "categoryId", "brandId"],
+        name: ["name", "description", "price", "status", "categoryId", "brandId"],
     });
     const [selectedStatus, setSelectedStatus] = useState<ProductStatus>(defaultValues.status);
     const [selectedCategoryId, setSelectedCategoryId] = useState(defaultValues.categoryId);
@@ -140,7 +144,9 @@ export function ProductForm({
                 name: data.name,
                 slug: data.slug,
                 description: data.description,
-                basePrice: Number(data.basePrice),
+                price: Number(data.price),
+                quantity: Number(data.quantity || "0"),
+                storeId: data.storeId || "",
                 status: data.status,
                 categoryId: data.categoryId,
                 brandId: data.brandId,
@@ -175,7 +181,7 @@ export function ProductForm({
                             <div className="flex items-center justify-between text-sm">
                                 <span>Price</span>
                                 <span className="font-semibold">
-                                    {previewBasePrice ? `$${Number(previewBasePrice).toFixed(2)}` : "$0.00"}
+                                    {previewPrice ? `$${Number(previewPrice).toFixed(2)}` : "$0.00"}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
@@ -246,9 +252,9 @@ export function ProductForm({
                     <CardContent className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="space-y-1.5">
-                                <Label htmlFor="basePrice">Base Price (USD) *</Label>
-                                <Input id="basePrice" type="number" step="0.01" placeholder="0.00" {...register("basePrice")} />
-                                {errors.basePrice && <p className="text-xs text-destructive">{errors.basePrice.message}</p>}
+                                <Label htmlFor="price">Base Price (USD) *</Label>
+                                <Input id="price" type="number" step="0.01" placeholder="0.00" {...register("price")} />
+                                {errors.price && <p className="text-xs text-destructive">{errors.price.message}</p>}
                             </div>
 
                             <div className="space-y-1.5">

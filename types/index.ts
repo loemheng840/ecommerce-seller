@@ -77,24 +77,41 @@ export interface Product {
     id: string;
     name: string;
     slug: string;
-    description?: string;
-    basePrice: number;
+    description: string;
+    thumbnail: string;
     status: ProductStatus;
-    category?: Category;
-    brand?: Brand;
-    imageUrls?: string[];
+    category: {
+        id: string;
+        name: string;
+    };
+    brand: {
+        id: string;
+        name: string;
+    } | null;
+    storeId: string;
+    quantity: number;
+    price: number;
+    active: boolean;
+    lowStockThreshold: number;
     createdAt: string;
     updatedAt: string;
+    createdBy: string;
+    updatedBy: string;
 }
 
 export interface ProductRequest {
     name: string;
     slug: string;
     description?: string;
-    basePrice: number;
+    thumbnail?: string;
     status: ProductStatus;
     categoryId: string;
-    brandId: string;
+    brandId?: string;
+    storeId: string;
+    quantity: number;
+    price: number;
+    active?: boolean;
+    lowStockThreshold?: number;
 }
 
 // ─── Product Listing (Store Inventory) ────────────────────────────────────────
@@ -353,4 +370,61 @@ export interface Notification {
     message: string;
     isRead: boolean;
     createdAt: string;
+}
+
+// ─── Attribute ───────────────────────────────────────────────────────────────
+export interface AttributeResponse {
+    id: string;
+    name: string;
+}
+
+export interface AttributeRequest {
+    name: string;
+}
+
+export interface AttributeValueResponse {
+    id: string;
+    attributeId: string;
+    value: string;
+}
+
+export interface AttributeValueRequest {
+    attributeId: string;
+    value: string;
+}
+
+export interface AttributeWithValueResponse extends AttributeResponse {
+    values: AttributeValueResponse[];
+}
+
+// ─── Product Variant ──────────────────────────────────────────────────────────
+export interface ProductVariantResponse {
+    id: string;
+    productId: string;
+    sku: string;
+    barcode?: string;
+    price: number;
+    salePrice?: number;
+    costPrice?: number;
+    weight?: number;
+    length?: number;
+    width?: number;
+    height?: number;
+    status: boolean;
+    attributeValueIds: string[];
+}
+
+export interface ProductVariantRequest {
+    productId: string;
+    sku: string;
+    barcode?: string;
+    price: number;
+    salePrice?: number;
+    costPrice?: number;
+    weight?: number;
+    length?: number;
+    width?: number;
+    height?: number;
+    status: boolean;
+    attributeValueIds: string[];
 }

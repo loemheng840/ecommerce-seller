@@ -20,19 +20,6 @@ function getJwtSub(): string | null {
         return null;
     }
 }
-
-/**
- * Resolves the currently logged-in seller's own store.
- *
- * Strategy:
- * 1. If `store_id` is cached in localStorage → fetch that store directly and
- *    verify the storeOwnerId matches the JWT sub before trusting it.
- * 2. Otherwise → call GET /api/v1/stores/owner/{ownerId} to find the seller's store.
- * 3. Persist the resolved store ID in localStorage for subsequent page loads.
- *
- * The backend enforces ownership on all write operations anyway, so this is
- * only a UX convenience to avoid passing storeId in every URL.
- */
 export function useSellerStore() {
     const [store, setStore] = useState<Store | null>(null);
     const [loading, setLoading] = useState(true);

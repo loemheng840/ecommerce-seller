@@ -804,7 +804,7 @@ const mockStoreAdapter = async (config: InternalAxiosRequestConfig) => {
         if (!found) {
             return Promise.reject({ response: { status: 404, data: { message: "Coupon not found." } } });
         }
-        const updated = { ...found, isActive: active, status: active ? "ACTIVE" : "INACTIVE" };
+        const updated = { ...found, isActive: active, status: (active ? "ACTIVE" : "INACTIVE") as any };
         writeStoredCoupons(coupons.map((coupon) => coupon.id === couponId ? updated : coupon));
         return { data: updated, status: 200, statusText: "OK", headers: {}, config };
     }
@@ -847,19 +847,23 @@ const mockStoreAdapter = async (config: InternalAxiosRequestConfig) => {
 
     const byProductMatch = url.match(/\/api\/v1\/stores\/([^/]+)\/reports\/sales\/by-product$/);
     if (byProductMatch && method === "get") {
-        return { data: [
-            { productName: "Aster Ceramic Mug", revenue: 152, quantity: 4 },
-            { productName: "Nordic Linen Throw", revenue: 108, quantity: 2 },
-            { productName: "Minimal Desk Lamp", revenue: 84, quantity: 2 },
-        ], status: 200, statusText: "OK", headers: {}, config };
+        return {
+            data: [
+                { productName: "Aster Ceramic Mug", revenue: 152, quantity: 4 },
+                { productName: "Nordic Linen Throw", revenue: 108, quantity: 2 },
+                { productName: "Minimal Desk Lamp", revenue: 84, quantity: 2 },
+            ], status: 200, statusText: "OK", headers: {}, config
+        };
     }
 
     const topProductsMatch = url.match(/\/api\/v1\/stores\/([^/]+)\/reports\/sales\/top-products$/);
     if (topProductsMatch && method === "get") {
-        return { data: [
-            { productName: "Aster Ceramic Mug", revenue: 152, quantity: 4 },
-            { productName: "Nordic Linen Throw", revenue: 108, quantity: 2 },
-        ], status: 200, statusText: "OK", headers: {}, config };
+        return {
+            data: [
+                { productName: "Aster Ceramic Mug", revenue: 152, quantity: 4 },
+                { productName: "Nordic Linen Throw", revenue: 108, quantity: 2 },
+            ], status: 200, statusText: "OK", headers: {}, config
+        };
     }
 
     const orderReportMatch = url.match(/\/api\/v1\/stores\/([^/]+)\/reports\/orders$/);
@@ -939,11 +943,13 @@ const mockStoreAdapter = async (config: InternalAxiosRequestConfig) => {
 
     const taxDetailedMatch = url.match(/\/api\/v1\/stores\/([^/]+)\/reports\/tax\/detailed$/);
     if (taxDetailedMatch && method === "get") {
-        return { data: [
-            { label: "VAT", amount: 124.5 },
-            { label: "Sales tax", amount: 65.3 },
-            { label: "Shipping tax", amount: 12.1 },
-        ], status: 200, statusText: "OK", headers: {}, config };
+        return {
+            data: [
+                { label: "VAT", amount: 124.5 },
+                { label: "Sales tax", amount: 65.3 },
+                { label: "Shipping tax", amount: 12.1 },
+            ], status: 200, statusText: "OK", headers: {}, config
+        };
     }
 
     if (url.includes("/reports/export/")) {

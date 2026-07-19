@@ -3,11 +3,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     LayoutDashboard, Package, ShoppingCart, Tag, Star,
-    Bell, Settings, Store, Boxes, LogOut, ChevronLeft, ChevronRight,
+    Bell, Settings, Boxes, ChevronLeft, ChevronRight,
     Percent, TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navGroups = [
     {
@@ -16,12 +16,6 @@ const navGroups = [
             { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
             { label: "Analytics", href: "/analytics/sales", icon: TrendingUp },
             { label: "Reviews", href: "/reviews", icon: Star },
-        ],
-    },
-    {
-        label: "Store",
-        items: [
-            { label: "Stock", href: "/store/stock", icon: Boxes },
         ],
     },
     {
@@ -51,9 +45,29 @@ const navGroups = [
 export function Sidebar() {
     const pathname = usePathname();
     const [collapsed, setCollapsed] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    // Prevent hydration mismatch
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const isActive = (href: string) =>
         href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+
+    // Render simplified version during SSR
+    if (!mounted) {
+        return (
+            <aside className="relative flex h-screen w-60 flex-col border-r border-border bg-sidebar text-sidebar-foreground">
+                <div className="flex h-14 shrink-0 items-center border-b border-sidebar-border px-3 gap-3">
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-sm">
+                        S
+                    </div>
+                    <span className="font-semibold text-sm truncate">Seller Portal</span>
+                </div>
+            </aside>
+        );
+    }
 
     return (
         <aside
@@ -99,25 +113,6 @@ export function Sidebar() {
                     </div>
                 ))}
             </nav>
-
-            {/* Logout */}
-            <div className="border-t border-sidebar-border p-2">
-                <button
-                    onClick={() => {
-                        localStorage.removeItem("access_token");
-                        localStorage.removeItem("store_id");
-                        window.location.href = "/login";
-                    }}
-                    className={cn(
-                        "flex w-full items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium text-destructive/80 hover:bg-destructive/10 hover:text-destructive transition-colors",
-                        collapsed && "justify-center"
-                    )}
-                    title={collapsed ? "Logout" : undefined}
-                >
-                    <LogOut className="size-4 shrink-0" />
-                    {!collapsed && <span>Logout</span>}
-                </button>
-            </div>
 
             {/* Collapse toggle */}
             <button
